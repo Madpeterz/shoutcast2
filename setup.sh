@@ -9,12 +9,11 @@ escape_for_sed() {
 
 render_template() {
 	template_file="$1"
-	target_file="$2"
-	shift 2
+	shift
 
 	tmp_file="$(mktemp)"
 	sed "$@" "$template_file" > "$tmp_file"
-	mv "$tmp_file" "$target_file"
+	printf '%s\n' "$tmp_file"
 }
 
 validate_numeric() {
@@ -60,13 +59,13 @@ case "$SERVERTYPE" in
 		validate_numeric "$BITRATELOW" BITRATELOW
 		validate_numeric "$BITRATEHIGH" BITRATEHIGH
 
-		render_template "$CONF_FILE" "$CONF_FILE" \
+		CONF_FILE="$(render_template "$CONF_FILE" \
 			-e "s/\[\[DJPASSWORD\]\]/$(escape_for_sed "$DJPASSWORD")/g" \
 			-e "s/\[\[ADMINPASSWORD\]\]/$(escape_for_sed "$ADMINPASSWORD")/g" \
 			-e "s/\[\[STREAMPORT\]\]/$(escape_for_sed "$STREAMPORT")/g" \
 			-e "s/\[\[LISTENERS\]\]/$(escape_for_sed "$LISTENERS")/g" \
 			-e "s/\[\[BITRATELOW\]\]/$(escape_for_sed "$BITRATELOW")/g" \
-			-e "s/\[\[BITRATEHIGH\]\]/$(escape_for_sed "$BITRATEHIGH")/g"
+			-e "s/\[\[BITRATEHIGH\]\]/$(escape_for_sed "$BITRATEHIGH")/g")"
 
 		chmod a+x sc_serv
 		exec ./sc_serv "$CONF_FILE"
@@ -76,11 +75,11 @@ case "$SERVERTYPE" in
 		validate_numeric "$STREAMPORT" STREAMPORT
 		validate_numeric "$LISTENERS" LISTENERS
 
-		render_template "$CONF_FILE" "$CONF_FILE" \
+		CONF_FILE="$(render_template "$CONF_FILE" \
 			-e "s/\[\[DJPASSWORD\]\]/$(escape_for_sed "$DJPASSWORD")/g" \
 			-e "s/\[\[ADMINPASSWORD\]\]/$(escape_for_sed "$ADMINPASSWORD")/g" \
 			-e "s/\[\[STREAMPORT\]\]/$(escape_for_sed "$STREAMPORT")/g" \
-			-e "s/\[\[LISTENERS\]\]/$(escape_for_sed "$LISTENERS")/g"
+			-e "s/\[\[LISTENERS\]\]/$(escape_for_sed "$LISTENERS")/g")"
 
 		exec icecast2 -c "$CONF_FILE"
 		;;
