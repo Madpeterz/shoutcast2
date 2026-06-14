@@ -44,8 +44,9 @@ Optional overrides (defaults are already defined in the image):
 - `SERVERTYPE` default: `shoutcast2`
 - `STREAMPORT` default: `8000`
 - `LISTENERS` default: `512`
-- `BITRATELOW` default: `64000`
-- `BITRATEHIGH` default: `320000`
+- `BITRATELOW` default: `64000` (SHOUTcast only)
+- `BITRATEHIGH` default: `320000` (SHOUTcast only)
+- `HOSTNAME` default: container hostname (Icecast only — used in stream URLs)
 
 Example with all overrides:
 
@@ -88,12 +89,18 @@ SERVERTYPE=shoutcast2 DJPASSWORD=sourcepass ADMINPASSWORD=adminpass ./setup.sh
 
 `setup.sh` replaces these tokens in the active config at startup:
 
+Shared (both server types):
 - `[[DJPASSWORD]]`
 - `[[ADMINPASSWORD]]`
 - `[[STREAMPORT]]`
 - `[[LISTENERS]]`
+
+SHOUTcast only:
 - `[[BITRATELOW]]`
 - `[[BITRATEHIGH]]`
+
+Icecast only:
+- `[[HOSTNAME]]`
 
 ## GitHub Actions: Auto Build and Push
 
@@ -123,4 +130,5 @@ The workflow publishes tags for branch, git tag, commit SHA, and `latest` on the
 - `SERVERTYPE` must be either `shoutcast2` or `icecast`.
 - `ADMINPASSWORD` must be different from `DJPASSWORD`.
 - Numeric values are enforced for `STREAMPORT` and `LISTENERS` on both server types, and for `BITRATELOW` and `BITRATEHIGH` on `shoutcast2`.
+- `HOSTNAME` defaults to the container hostname (Docker sets this automatically). Override with `-e HOSTNAME=myserver.example.com` for Icecast directory listings and stream URLs.
 - Exposed container port is `8000` by default; adjust port mapping if you override `STREAMPORT`.

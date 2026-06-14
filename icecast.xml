@@ -1,7 +1,7 @@
 <icecast>
   <location>Docker container</location>
   <admin>admin@localhost</admin>
-  <hostname>localhost</hostname>
+  <hostname>[[HOSTNAME]]</hostname>
   <daemon>0</daemon>
 
   <limits>

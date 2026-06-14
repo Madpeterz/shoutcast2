@@ -72,6 +72,7 @@ case "$SERVERTYPE" in
 		;;
 	icecast)
 		CONF_FILE="${CONF_FILE:-icecast.xml}"
+		HOSTNAME="${HOSTNAME:-localhost}"
 		validate_numeric "$STREAMPORT" STREAMPORT
 		validate_numeric "$LISTENERS" LISTENERS
 
@@ -79,7 +80,8 @@ case "$SERVERTYPE" in
 			-e "s/\[\[DJPASSWORD\]\]/$(escape_for_sed "$DJPASSWORD")/g" \
 			-e "s/\[\[ADMINPASSWORD\]\]/$(escape_for_sed "$ADMINPASSWORD")/g" \
 			-e "s/\[\[STREAMPORT\]\]/$(escape_for_sed "$STREAMPORT")/g" \
-			-e "s/\[\[LISTENERS\]\]/$(escape_for_sed "$LISTENERS")/g")"
+			-e "s/\[\[LISTENERS\]\]/$(escape_for_sed "$LISTENERS")/g" \
+			-e "s/\[\[HOSTNAME\]\]/$(escape_for_sed "$HOSTNAME")/g")"
 
 		exec icecast2 -c "$CONF_FILE"
 		;;

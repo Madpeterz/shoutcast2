@@ -3,7 +3,7 @@ FROM debian:bookworm-slim
 WORKDIR /app
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
-	&& apt-get install -y --no-install-recommends icecast2 \
+	&& apt-get install -y --no-install-recommends icecast2 mime-support \
 	&& rm -rf /var/lib/apt/lists/*
 
 COPY sc_serv ./sc_serv
@@ -13,7 +13,9 @@ COPY icecast.xml ./icecast.xml
 COPY logs ./logs
 COPY tos.txt ./tos.txt
 
-RUN chmod +x /app/sc_serv /app/setup.sh
+RUN sed -i 's/\r//' /app/setup.sh \
+	&& chmod +x /app/sc_serv /app/setup.sh \
+	&& chown -R 1000:1000 /app/logs
 
 ENV SERVERTYPE=shoutcast2
 ENV DJPASSWORD=change_this_source_password
