@@ -83,6 +83,10 @@ case "$SERVERTYPE" in
 			-e "s/\[\[LISTENERS\]\]/$(escape_for_sed "$LISTENERS")/g" \
 			-e "s/\[\[HOSTNAME\]\]/$(escape_for_sed "$HOSTNAME")/g")"
 
-		exec icecast2 -c "$CONF_FILE"
+		icecast2 -c "$CONF_FILE" &
+		ICECAST_PID=$!
+		until [ -f /app/logs/icecast-error.log ]; do sleep 0.1; done
+		tail -f /app/logs/icecast-error.log &
+		wait $ICECAST_PID
 		;;
 esac
